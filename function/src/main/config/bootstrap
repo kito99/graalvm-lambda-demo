@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+./hello-world-lambda-binary $_HANDLER
+#./hello-world-lambda-binary virtua.demo.graalvm.lambda.HelloWorldRequestHandler

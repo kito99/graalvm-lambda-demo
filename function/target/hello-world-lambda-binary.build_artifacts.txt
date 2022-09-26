@@ -1,0 +1,3 @@
+[EXECUTABLE]
+hello-world-lambda-binary
+
