@@ -106,7 +106,13 @@ public class InfrastructureStack extends Stack {
                 .handler("virtua.demo.graalvm.lambda.HelloWorldRequestHandler")
                 .memorySize(256)
                 .logRetention(RetentionDays.ONE_WEEK)
+
+                // x86 deployment
+                //.architectures(singletonList(Architecture.X86_64))
+
+                // ARM deployment
                 .architectures(singletonList(Architecture.ARM_64))
+
                 .build());
 
         httpApi.addRoutes(AddRoutesOptions.builder()
