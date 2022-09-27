@@ -5,7 +5,7 @@ This is an ordinary Java Maven project, with the following targets:
 * `mvn clean package` normal Java build
 * `mvn clean package -P native-image` GraalVM Native Image build
 
-For the native image build, in addition to the additional Maven profile, you'll find GraalVM metadata to support the 
+For the native image build, in addition to the additional Maven profile, you'll find [GraalVM rechability metadata](https://www.graalvm.org/22.2/reference-manual/native-image/metadata/) to support the 
 AWS dependencies inside the [src/main/resources/META-INF/native-image](src/main/resources/META-INF/native-image) folder.
 
 There is also the [src/main/config/bootstrap](src/main/config/bootstrap) file, which is required for the Lambda Custom Runtime. 

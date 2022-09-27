@@ -37,7 +37,8 @@ mvn clean package
 
 > TIP: Make sure Docker Desktop is running before deploying.
 
-> NOTE: Currently this project is set to build using an ARM Docker image and deploy to [Lambda ARM architecture](https://docs.aws.amazon.com/lambda/latest/dg/foundation-arch.html#foundation-arch-adv)
+> NOTE: Currently this project is set to build using an ARM Docker image and deploy to 
+> [Lambda ARM architecture](https://docs.aws.amazon.com/lambda/latest/dg/foundation-arch.html#foundation-arch-adv)
 > (which is cheaper). To change to x86, edit [InfrastructureStack.java](infra/src/main/java/virtua/demo/graalvm/lambda/InfrastructureStack.java).
 
 The follow command does the following:
@@ -71,7 +72,7 @@ Hello world!
 If you log into the AWS Console, you'll be able to find the following artifacts:
 
 * CloudFormation Stack: GraalVmLambdaDemoStack
-* Lambda: GraalVmLambdaDemoStack-HelloWorldFunctionGraalVm<id>>
+* Lambda: GraalVmLambdaDemoStack-HelloWorldFunctionGraalVm<id>
 * Lambda: GraalVmLambdaDemoStack-HelloWorldFunctionJvm<id>
 * Lambda: GraalVmLambdaDemoStack-LogRetentiona<id>
 * API Gateway Route: GraalVmLambdaDemoApi
