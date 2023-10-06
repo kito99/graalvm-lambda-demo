@@ -9,8 +9,6 @@
     <name>GraalVM and Lambda Demo Infra</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <cdk.version>1.125.0</cdk.version>
-        <junit.version>5.9.0</junit.version>
     </properties>
 
     <build>
@@ -40,28 +38,23 @@
         <!-- AWS Cloud Development Kit -->
         <dependency>
             <groupId>software.amazon.awscdk</groupId>
-            <artifactId>core</artifactId>
-            <version>${cdk.version}</version>
+            <artifactId>aws-cdk-lib</artifactId>
+            <version>2.88.0</version>
         </dependency>
         <dependency>
             <groupId>software.amazon.awscdk</groupId>
-            <artifactId>lambda</artifactId>
-            <version>${cdk.version}</version>
+            <artifactId>apigatewayv2-integrations-alpha</artifactId>
+            <version>2.88.0-alpha.0</version>
         </dependency>
         <dependency>
-            <groupId>software.amazon.awscdk</groupId>
-            <artifactId>apigatewayv2</artifactId>
-            <version>${cdk.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>software.amazon.awscdk</groupId>
-            <artifactId>apigatewayv2-integrations</artifactId>
-            <version>${cdk.version}</version>
+            <groupId>software.constructs</groupId>
+            <artifactId>constructs</artifactId>
+            <version>10.2.49</version>
         </dependency>
         <dependency>
           <groupId>org.junit.jupiter</groupId>
           <artifactId>junit-jupiter</artifactId>
-          <version>${junit.version}</version>
+          <version>5.9.0</version>
           <scope>test</scope>
         </dependency>
     </dependencies>

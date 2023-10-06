@@ -1,38 +1,40 @@
 package virtua.demo.graalvm.lambda;
 
 import org.jetbrains.annotations.NotNull;
-import software.amazon.awscdk.core.BundlingOptions;
-import software.amazon.awscdk.core.CfnOutput;
-import software.amazon.awscdk.core.CfnOutputProps;
-import software.amazon.awscdk.core.Construct;
-import software.amazon.awscdk.core.DockerImage;
-import software.amazon.awscdk.core.DockerVolume;
-import software.amazon.awscdk.core.Stack;
-import software.amazon.awscdk.core.StackProps;
-import software.amazon.awscdk.services.apigatewayv2.AddRoutesOptions;
-import software.amazon.awscdk.services.apigatewayv2.HttpApi;
-import software.amazon.awscdk.services.apigatewayv2.HttpApiProps;
-import software.amazon.awscdk.services.apigatewayv2.HttpMethod;
-import software.amazon.awscdk.services.apigatewayv2.PayloadFormatVersion;
-import software.amazon.awscdk.services.apigatewayv2.integrations.LambdaProxyIntegration;
-import software.amazon.awscdk.services.apigatewayv2.integrations.LambdaProxyIntegrationProps;
+import software.amazon.awscdk.BundlingOptions;
+import software.amazon.awscdk.CfnOutput;
+import software.amazon.awscdk.CfnOutputProps;
+import software.amazon.awscdk.DockerImage;
+import software.amazon.awscdk.DockerVolume;
+import software.amazon.awscdk.Stack;
+import software.amazon.awscdk.StackProps;
+import software.amazon.awscdk.services.apigatewayv2.alpha.AddRoutesOptions;
+import software.amazon.awscdk.services.apigatewayv2.alpha.HttpApi;
+import software.amazon.awscdk.services.apigatewayv2.alpha.HttpApiProps;
+import software.amazon.awscdk.services.apigatewayv2.alpha.HttpMethod;
+import software.amazon.awscdk.services.apigatewayv2.alpha.PayloadFormatVersion;
+import software.amazon.awscdk.services.apigatewayv2.integrations.alpha.HttpLambdaIntegration;
+import software.amazon.awscdk.services.apigatewayv2.integrations.alpha.HttpLambdaIntegrationProps;
 import software.amazon.awscdk.services.lambda.Architecture;
 import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.FunctionProps;
 import software.amazon.awscdk.services.lambda.Runtime;
-import software.amazon.awscdk.services.logs.RetentionDays;
 import software.amazon.awscdk.services.s3.assets.AssetOptions;
+import software.constructs.Construct;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
-import static software.amazon.awscdk.core.BundlingOutput.ARCHIVED;
+import static software.amazon.awscdk.BundlingOutput.ARCHIVED;
 
+
+@SuppressWarnings("unused")
 public class InfrastructureStack extends Stack {
 
     public static final String HELLO_WORLD_JVM_PATH = "/hello-world-jvm";
+    public static final String HELLO_WORLD_JVM_SNAPSTART_PATH = "/hello-world-jvm-snapstert";
     public static final String HELLO_WORLD_GRAAL_PATH = "/hello-world-graal";
 
     public InfrastructureStack(final Construct parent, final String id) {
@@ -47,6 +49,7 @@ public class InfrastructureStack extends Stack {
                 .build());
 
         configureJvmFunction(httpApi);
+        configureJvmSnapStartFunction(httpApi);
         configureGraalVmFunction(httpApi);
     }
 
@@ -56,16 +59,16 @@ public class InfrastructureStack extends Stack {
                 .code(Code.fromAsset("../function/target/hello-world-lambda.jar"))
                 .handler("virtua.demo.graalvm.lambda.HelloWorldRequestHandler")
                 .memorySize(2048)
-                .logRetention(RetentionDays.ONE_WEEK)
+//                .logRetention(RetentionDays.ONE_WEEK)
                 .build());
 
         httpApi.addRoutes(AddRoutesOptions.builder()
                 .path(HELLO_WORLD_JVM_PATH)
                 .methods(singletonList(HttpMethod.GET))
-                .integration(new LambdaProxyIntegration(LambdaProxyIntegrationProps.builder()
-                        .handler(jvmHelloWorldFunction)
-                        .payloadFormatVersion(PayloadFormatVersion.VERSION_2_0)
-                        .build()))
+                .integration(new HttpLambdaIntegration("HelloWorldFunctionJvm", jvmHelloWorldFunction,
+                        HttpLambdaIntegrationProps.builder()
+                                .payloadFormatVersion(PayloadFormatVersion.VERSION_2_0)
+                                .build()))
                 .build());
 
         // Output the URL for the API to the console after creating the CloudFormation stack
@@ -74,6 +77,32 @@ public class InfrastructureStack extends Stack {
                 .value(httpApi.getApiEndpoint() + HELLO_WORLD_JVM_PATH)
                 .build());
     }
+
+    private void configureJvmSnapStartFunction(HttpApi httpApi) {
+        Function jvmHelloWorldFunction = new Function(this, "HelloWorldFunctionJvmSnapStart", FunctionProps.builder()
+                .runtime(Runtime.JAVA_11)
+                .code(Code.fromAsset("../function/target/hello-world-lambda.jar"))
+                .handler("virtua.demo.graalvm.lambda.HelloWorldRequestHandler")
+                .memorySize(2048)
+//                .logRetention(RetentionDays.ONE_WEEK)
+                .build());
+
+        httpApi.addRoutes(AddRoutesOptions.builder()
+                .path(HELLO_WORLD_JVM_SNAPSTART_PATH)
+                .methods(singletonList(HttpMethod.GET))
+                .integration(new HttpLambdaIntegration("HelloWorldJvmSnapStartApiUrl", jvmHelloWorldFunction,
+                        HttpLambdaIntegrationProps.builder()
+                                .payloadFormatVersion(PayloadFormatVersion.VERSION_2_0)
+                                .build()))
+                .build());
+
+        // Output the URL for the API to the console after creating the CloudFormation stack
+        new CfnOutput(this, "HelloWorldJvmSnapStartApiUrl", CfnOutputProps.builder()
+                .exportName("HelloWorldJvmSnapStartApiUrl")
+                .value(httpApi.getApiEndpoint() + HELLO_WORLD_JVM_SNAPSTART_PATH)
+                .build());
+    }
+
 
     private void configureGraalVmFunction(@NotNull HttpApi httpApi) {
         List<String> functionOnePackagingInstructions = Arrays.asList(
@@ -105,23 +134,23 @@ public class InfrastructureStack extends Stack {
                         .build()))
                 .handler("virtua.demo.graalvm.lambda.HelloWorldRequestHandler")
                 .memorySize(256)
-                .logRetention(RetentionDays.ONE_WEEK)
+//                .logRetention(RetentionDays.ONE_WEEK)
 
                 // x86 deployment
                 //.architectures(singletonList(Architecture.X86_64))
 
                 // ARM deployment
-                .architectures(singletonList(Architecture.ARM_64))
+                .architecture(Architecture.ARM_64)
 
                 .build());
 
         httpApi.addRoutes(AddRoutesOptions.builder()
                 .path(HELLO_WORLD_GRAAL_PATH)
                 .methods(singletonList(HttpMethod.GET))
-                .integration(new LambdaProxyIntegration(LambdaProxyIntegrationProps.builder()
-                        .handler(graalHelloWorldFunction)
-                        .payloadFormatVersion(PayloadFormatVersion.VERSION_2_0)
-                        .build()))
+                .integration(new HttpLambdaIntegration("HelloWorldGraalApiUrl", graalHelloWorldFunction,
+                        HttpLambdaIntegrationProps.builder()
+                                .payloadFormatVersion(PayloadFormatVersion.VERSION_2_0)
+                                .build()))
                 .build());
 
         // Output the URL for the API to the console after creating the CloudFormation stack

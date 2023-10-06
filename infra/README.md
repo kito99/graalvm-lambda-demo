@@ -10,7 +10,7 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 It is a [Maven](https://maven.apache.org/) based project, so you can open this project with any Maven compatible Java IDE to build and run tests.
 
-> NOTE: The Code in this project is for CDK 1.x (it has not been upgraded to 2.x yet)
+> NOTE: The Code in this project is for CDK 2.x.
 
 > NOTE: Currently this stack uses an ARM Docker image for building, and an ARM AWS Lambda container for deployment. 
 > It will work on an M1 Mac, but it won't work on an x86 machine without emulation. To change to x86, uncomment the 
