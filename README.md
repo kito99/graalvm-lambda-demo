@@ -81,6 +81,8 @@ If you log into the AWS Console, you'll be able to find the following artifacts:
 
 To see how these are configured, look at [InfrastructureStack.java](infra/src/main/java/virtua/demo/graalvm/lambda/InfrastructureStack.java).
 
+> NOTE: I've also added another function called `GraalVmLambdaDemoStack-HelloWorldFunctionJvmSnapstart`. Currently this is exactly the same as `HelloWorldFunctionJvm`, because SnapStart doesn't appear to be supported yet in the Java CDK. You must manually enable it as described here: https://docs.aws.amazon.com/lambda/latest/dg/snapstart-activate.html#snapshot-console.
+
 ## Performance
 
 You can find performance info in the AWS Console; the easiest way is to view the Lambda function, Monitor -> Logs and 
