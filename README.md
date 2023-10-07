@@ -7,9 +7,7 @@ This demo was derived from:
 * https://github.com/marksailes/graalvm-on-lambda (described in https://www.graalvmonlambda.com/, but slightly outdated)
 * https://github.com/aws-samples/serverless-graalvm-demo
 
-Companion presentation (presented at [JCON 2022](https://jcononline2022.sched.com/event/11lDq/scale-up-with-graalvm-and-aws-lambdas?iframe=no)):
-* [Slides (PDF)](https://virtua.tech/slides/graal-vm-and-lambdas)
-* [MindMap](https://mm.tt/map/2417302081?t=QhyserBMjj)
+Companion presentation: https://kitomann.com/#/sessions/7/scale-up-with-graalvm-and-aws-lambdas.
 See the presentation for background information (i.e. why use GraalVM, Lambda overview, etc).
 
 ## Pre-requisites:
