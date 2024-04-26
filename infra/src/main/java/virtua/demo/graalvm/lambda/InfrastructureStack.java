@@ -20,6 +20,7 @@ import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.FunctionProps;
 import software.amazon.awscdk.services.lambda.Runtime;
+import software.amazon.awscdk.services.lambda.SnapStartConf;
 import software.amazon.awscdk.services.s3.assets.AssetOptions;
 import software.constructs.Construct;
 
@@ -36,6 +37,9 @@ public class InfrastructureStack extends Stack {
     public static final String HELLO_WORLD_JVM_PATH = "/hello-world-jvm";
     public static final String HELLO_WORLD_JVM_SNAPSTART_PATH = "/hello-world-jvm-snapstert";
     public static final String HELLO_WORLD_GRAAL_PATH = "/hello-world-graal";
+    public static final String HELLO_WORLD_JVM_SNAP_START_API_URL = "HelloWorldJvmSnapStartApiUrl";
+    public static final String HELLO_WORLD_JVM_API_URL = "HelloWorldJvmApiUrl";
+    public static final String HELLO_WORLD_GRAAL_API_URL = "HelloWorldGraalApiUrl";
 
     public InfrastructureStack(final Construct parent, final String id) {
         this(parent, id, null);
@@ -59,7 +63,6 @@ public class InfrastructureStack extends Stack {
                 .code(Code.fromAsset("../function/target/hello-world-lambda.jar"))
                 .handler("virtua.demo.graalvm.lambda.HelloWorldRequestHandler")
                 .memorySize(2048)
-//                .logRetention(RetentionDays.ONE_WEEK)
                 .build());
 
         httpApi.addRoutes(AddRoutesOptions.builder()
@@ -72,8 +75,8 @@ public class InfrastructureStack extends Stack {
                 .build());
 
         // Output the URL for the API to the console after creating the CloudFormation stack
-        new CfnOutput(this, "HelloWorldJvmApiUrl", CfnOutputProps.builder()
-                .exportName("HelloWorldJvmApiUrl")
+        new CfnOutput(this, HELLO_WORLD_JVM_API_URL, CfnOutputProps.builder()
+                .exportName(HELLO_WORLD_JVM_API_URL)
                 .value(httpApi.getApiEndpoint() + HELLO_WORLD_JVM_PATH)
                 .build());
     }
@@ -83,26 +86,25 @@ public class InfrastructureStack extends Stack {
                 .runtime(Runtime.JAVA_11)
                 .code(Code.fromAsset("../function/target/hello-world-lambda.jar"))
                 .handler("virtua.demo.graalvm.lambda.HelloWorldRequestHandler")
+                .snapStart(SnapStartConf.ON_PUBLISHED_VERSIONS)
                 .memorySize(2048)
-//                .logRetention(RetentionDays.ONE_WEEK)
                 .build());
 
         httpApi.addRoutes(AddRoutesOptions.builder()
                 .path(HELLO_WORLD_JVM_SNAPSTART_PATH)
                 .methods(singletonList(HttpMethod.GET))
-                .integration(new HttpLambdaIntegration("HelloWorldJvmSnapStartApiUrl", jvmHelloWorldFunction,
+                .integration(new HttpLambdaIntegration(HELLO_WORLD_JVM_SNAP_START_API_URL, jvmHelloWorldFunction,
                         HttpLambdaIntegrationProps.builder()
                                 .payloadFormatVersion(PayloadFormatVersion.VERSION_2_0)
                                 .build()))
                 .build());
 
         // Output the URL for the API to the console after creating the CloudFormation stack
-        new CfnOutput(this, "HelloWorldJvmSnapStartApiUrl", CfnOutputProps.builder()
-                .exportName("HelloWorldJvmSnapStartApiUrl")
+        new CfnOutput(this, HELLO_WORLD_JVM_SNAP_START_API_URL, CfnOutputProps.builder()
+                .exportName(HELLO_WORLD_JVM_SNAP_START_API_URL)
                 .value(httpApi.getApiEndpoint() + HELLO_WORLD_JVM_SNAPSTART_PATH)
                 .build());
     }
-
 
     private void configureGraalVmFunction(@NotNull HttpApi httpApi) {
         List<String> functionOnePackagingInstructions = Arrays.asList(
@@ -134,7 +136,6 @@ public class InfrastructureStack extends Stack {
                         .build()))
                 .handler("virtua.demo.graalvm.lambda.HelloWorldRequestHandler")
                 .memorySize(256)
-//                .logRetention(RetentionDays.ONE_WEEK)
 
                 // x86 deployment
                 //.architectures(singletonList(Architecture.X86_64))
@@ -147,15 +148,15 @@ public class InfrastructureStack extends Stack {
         httpApi.addRoutes(AddRoutesOptions.builder()
                 .path(HELLO_WORLD_GRAAL_PATH)
                 .methods(singletonList(HttpMethod.GET))
-                .integration(new HttpLambdaIntegration("HelloWorldGraalApiUrl", graalHelloWorldFunction,
+                .integration(new HttpLambdaIntegration(HELLO_WORLD_GRAAL_API_URL, graalHelloWorldFunction,
                         HttpLambdaIntegrationProps.builder()
                                 .payloadFormatVersion(PayloadFormatVersion.VERSION_2_0)
                                 .build()))
                 .build());
 
         // Output the URL for the API to the console after creating the CloudFormation stack
-        new CfnOutput(this, "HelloWorldGraalApiUrl", CfnOutputProps.builder()
-                .exportName("HelloWorldGraalApiUrl")
+        new CfnOutput(this, HELLO_WORLD_GRAAL_API_URL, CfnOutputProps.builder()
+                .exportName(HELLO_WORLD_GRAAL_API_URL)
                 .value(httpApi.getApiEndpoint() + HELLO_WORLD_GRAAL_PATH)
                 .build());
     }
