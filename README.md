@@ -12,12 +12,12 @@ See the presentation for background information (i.e. why use GraalVM, Lambda ov
 
 ## Pre-requisites:
 
-In order to build this project, you must have the following installed:
+To build this project, you must have the following installed:
 
 * Maven 3.6.3
 * [GraalVM 22.0.0.2](https://www.graalvm.org/22.2/docs/getting-started/#install-graalvm) with [native image tool](https://www.graalvm.org/22.2/docs/getting-started/#native-image)
 * [AWS CDK CLI](https://docs.aws.amazon.com/cdk/v2/guide/cli.html)
-** If you don't have your credentials configured, an easy way to do it is to [install the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and [https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html](configure them through the `aws` command).
+  * If you don't have your credentials configured, an easy way to do it is to [install the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and [configure them through the `aws` command](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).
 * [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
 ## Building and deploying
@@ -30,6 +30,8 @@ Building and deployment is a two-step process:
 cd function
 mvn clean package
 ```
+
+> NOTE: You don't need to build the native image here, because this needs to be done on the target OS (Amazon Linux). It will be handled by the deployment process.
 
 2. Deploy to AWS Lambda
 
@@ -56,6 +58,7 @@ After deployment is complete, each deployment outputs a URL you can use for test
 Outputs:
 GraalVmLambdaDemoStack.HelloWorldGraalApiUrl = https://bchs2cynrg.execute-api.us-east-1.amazonaws.com/hello-world-graal
 GraalVmLambdaDemoStack.HelloWorldJvmApiUrl = https://bchs2cynrg.execute-api.us-east-1.amazonaws.com/hello-world-jvm
+GraalVmLambdaDemoStack.HelloWorldJvmSnapStartApiUrl = https://bchs2cynrg.execute-api.us-east-1.amazonaws.com/hello-world-jvm-snapstert
 ```
 
 And you can use `curl` (or your browser) to test:
@@ -64,6 +67,8 @@ And you can use `curl` (or your browser) to test:
 $ curl https://bchs2cynrg.execute-api.us-east-1.amazonaws.com/hello-world-jvm
 Hello world!
 $ curl https://bchs2cynrg.execute-api.us-east-1.amazonaws.com/hello-world-graal
+Hello world!
+$ curl https://bchs2cynrg.execute-api.us-east-1.amazonaws.com/hello-world-jvm-snapstert
 Hello world!
 ```
 
